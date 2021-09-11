@@ -1,0 +1,96 @@
+doctype html
+html(lang='en')
+  head
+    meta(charset='utf-8')
+    meta(http-equiv='X-UA-Compatible', content='IE=edge')
+    meta(name='viewport', content='width=device-width, initial-scale=1, shrink-to-fit=no')
+    meta(name='description', content='')
+    meta(name='author', content='')
+    title Register
+    link(href='css/styles.css', rel='stylesheet')
+    script(src='font-awesome.min.js', crossorigin='anonymous')
+    script(src='https://www.gstatic.com/firebasejs/7.14.1/firebase-app.js', defer='')
+    script(src='https://www.gstatic.com/firebasejs/7.14.1/firebase-auth.js', defer='')
+    script(src='https://cdn.jsdelivr.net/npm/js-cookie@rc/dist/js.cookie.min.js', defer='')
+  body.bg-primary
+    #layoutAuthentication
+      #layoutAuthentication_content
+        main
+          .container
+            .row.justify-content-center
+              .col-lg-7
+                .card.shadow-lg.border-0.rounded-lg.mt-5
+                  .card-header
+                    h3.text-center.font-weight-light.my-4 Create Account
+                  .card-body
+                    form#signup
+                        .form-floating.mb-3
+                            input#login.form-control(type='email', placeholder='name@example.com')
+                            label(for='login') Email address
+                        .row.mb-3
+                            .col-md-12
+                                .form-floating.mb-3.mb-md-0
+                                    input#password.form-control(type='password', placeholder='Create a password')
+                                    label(for='password') Password
+                        .row.mb-3
+                            .col-6
+                                .form-check
+                                    label.form-check-label Admin
+                                        input.form-check-input(type='radio' name='usertype' value='admin' checked)
+                            .col-6
+                                .form-check
+                                    label.form-check-label User
+                                        input.form-check-input(type='radio' name='usertype' value='user')
+                        .mt-4.mb-0
+                            .d-grid
+                                button.btn.btn-primary.btn-block Create Account
+                  .card-footer.text-center.py-3
+                    .small
+                      a(href='/login') Have an account? Go to login
+    script(src='bootstrap.bundle.min.js', crossorigin='anonymous')
+    script(src='js/scripts.js')
+    script.
+        window.addEventListener("DOMContentLoaded", () => {
+            const firebaseConfig = {
+                apiKey: "AIzaSyA5O9xBUG1e8BSHBRnJ5S7eJYcCj7EjVHE",
+                authDomain: "teachery-6b46e.firebaseapp.com",
+                projectId: "teachery-6b46e",
+                storageBucket: "teachery-6b46e.appspot.com",
+                messagingSenderId: "970997936850",
+                appId: "1:970997936850:web:96ed2d92e37059e2e9330b",
+                measurementId: "G-J4H8R0D53F"
+            };
+            firebase.initializeApp(firebaseConfig);
+            firebase.auth().setPersistence(firebase.auth.Auth.Persistence.NONE);
+            document
+                .getElementById("signup")
+                .addEventListener("submit", (event) => {
+                    event.preventDefault();
+                    const usertype = event.target.usertype.value;
+                    const login = event.target.login.value;
+                    const password = event.target.password.value;
+                    firebase
+                        .auth()
+                        .createUserWithEmailAndPassword(login, password)
+                        .then(async ({ user }) => {
+                            return user.getIdToken().then((idToken) => {
+                                return fetch("/sessionSignup", {
+                                    method: "POST",
+                                    headers: {
+                                    Accept: "application/json",
+                                        "Content-Type": "application/json",
+                                        "CSRF-Token": Cookies.get("XSRF-TOKEN"),
+                                    },
+                                    body: JSON.stringify({ idToken, usertype, uid: user.uid }),
+                                });
+                            });
+                        })
+                        .then(() => {
+                            return firebase.auth().signOut();
+                        })
+                        .then(() => {
+                            window.location.assign("/login");
+                        });
+                    return false;
+                });
+            });

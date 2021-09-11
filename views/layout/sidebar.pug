@@ -1,0 +1,29 @@
+#layoutSidenav_nav
+    nav#sidenavAccordion.sb-sidenav.accordion.sb-sidenav-dark
+        .sb-sidenav-menu
+            .nav
+                .sb-sidenav-menu-heading My Account
+                a.nav-link
+                    .sb-nav-link-icon
+                        i.fas.fa-user-circle
+                    | #{user.email}
+                hr
+                a.nav-link(href='charts.html')
+                    .sb-nav-link-icon
+                        i.fas.fa-plus-circle
+                    | Add To-do
+                a.nav-link(href='charts.html')
+                    .sb-nav-link-icon
+                        i.fas.fa-th-list
+                    | To-do List
+                a.nav-link.deleteAccount
+                    .sb-nav-link-icon
+                        i.fas.fa-user-minus
+                    | Delete Account
+                a.nav-link(href='tables.html')
+                    .sb-nav-link-icon
+                        i.fas.fa-sign-out-alt
+                    | Sign Out
+        .sb-sidenav-footer
+            .small Logged in as:
+            | #{user.role}

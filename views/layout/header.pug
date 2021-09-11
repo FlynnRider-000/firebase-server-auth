@@ -1,0 +1,16 @@
+nav.sb-topnav.navbar.navbar-expand.navbar-dark.bg-dark
+    // Navbar Brand
+    a.navbar-brand.ps-3(href='') Firebase Auth
+    // Sidebar Toggle
+    button#sidebarToggle.btn.btn-link.btn-sm.order-1.order-lg-0.me-4.me-lg-0(href='#!')
+        i.fas.fa-bars
+    form.d-none.d-md-inline-block.form-inline.ms-auto.me-0.me-md-3.my-2.my-md-0
+    // Navbar
+    ul.navbar-nav.ms-auto.ms-md-0.navbar
+        li.nav-item.dropdown
+            a#navbarDropdown.nav-link.dropdown-toggle(href='#', data-toggle="dropdown", aria-haspopup="true", aria-expanded="false")
+                i.fas.fa-user.fa-fw
+            .dropdown-menu(aria-labelledby='navbarDropdown', style="left:auto;right:0;")
+                a.dropdown-item #{user.email}
+                .dropdown-divider
+                a.dropdown-item(href='/logout') Sign out
