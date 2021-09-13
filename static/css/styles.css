@@ -11297,7 +11297,7 @@ body {
 #layoutAuthentication {
   display: flex;
   flex-direction: row;
-  height: calc(100vh - 69px);
+  height: calc(100vh - 69px - 56px);
 }
 #layoutAuthentication #layoutAuthentication_content {
   min-width: 0;
@@ -11696,8 +11696,9 @@ body {
     width: 80%;
   }
   .custom-ads-panel {
-    width: 20%;
-    height: 100%;
+    margin: 5px 5px 0px 5px;
+    width: calc(20% - 10px);
+    height: calc(100% - 5px);
     overflow: auto;
     border: 3px yellow solid;
     background-color: white;
@@ -11714,4 +11715,10 @@ body {
     border: 3px yellow solid;
     background-color: white;
   }
+}
+
+footer {
+  margin: 5px 5px 2px 5px !important;
+  padding-top: calc(1.5rem - 5px) !important;
+  padding-bottom: calc(1.5rem - 2px) !important;
 }

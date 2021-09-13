@@ -14,6 +14,8 @@ html(lang='en')
     script(src='https://www.gstatic.com/firebasejs/7.14.1/firebase-auth.js', defer='')
     script(src='https://cdn.jsdelivr.net/npm/js-cookie@rc/dist/js.cookie.min.js', defer='')
   body.bg-primary
+    nav.sb-topnav.navbar.navbar-expand.navbar-dark.bg-dark
+      a.navbar-brand.ps-3(href='') To Do App
     #layoutAuthentication
       #layoutAuthentication_content
         main
@@ -61,6 +63,15 @@ html(lang='en')
         showMethod: "fadeIn",
         hideMethod: "fadeOut",
         tapToDismiss: !1
+      };
+      window.onload = function(){
+        const type = '#{type}';
+        const msg = '#{msg}';
+        if (type == 'success') {
+          toastr.info("", msg, toastConfig);
+        } else if (type == 'error') {
+          toastr.error("", msg, toastConfig);
+        }
       };
       window.addEventListener("DOMContentLoaded", () => {
         const firebaseConfig = {

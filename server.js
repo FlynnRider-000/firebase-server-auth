@@ -60,7 +60,16 @@ app.get("/login", function (req, res) {
     res.redirect('/user');
     return;
   }
-  res.render("login.pug");
+  if (req.session.fgp == 'success') {
+    req.session.fgp = null;
+    res.render("login.pug", {type:'success', msg: 'Password reset link sent to your mail!'});
+  }
+  else if (req.session.fgp == 'error') {
+    req.session.fgp = null;
+    res.render("login.pug", {type:'error', msg: 'Something went wrong, please try again later!'});
+  }
+  else
+    res.render("login.pug");
 });
 
 app.get("/signup", function (req, res) {
@@ -91,9 +100,11 @@ app.post("/forgot-password", (req, res) => {
     const auth = getAuth();
     sendPasswordResetEmail(auth, useremail)
       .then(() => {
+        req.session.fgp = 'success';
         res.redirect('/login');
       })
       .catch((error) => {
+        req.session.fgp = 'error';
         res.redirect('/login');
       });
   } else {

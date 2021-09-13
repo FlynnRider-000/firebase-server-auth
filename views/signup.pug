@@ -14,6 +14,8 @@ html(lang='en')
     script(src='https://www.gstatic.com/firebasejs/7.14.1/firebase-auth.js', defer='')
     script(src='https://cdn.jsdelivr.net/npm/js-cookie@rc/dist/js.cookie.min.js', defer='')
   body.bg-primary
+    nav.sb-topnav.navbar.navbar-expand.navbar-dark.bg-dark
+        a.navbar-brand.ps-3(href='') To Do App
     #layoutAuthentication
       #layoutAuthentication_content
         main
@@ -48,7 +50,7 @@ html(lang='en')
                   .card-footer.text-center.py-3
                     .small
                       a(href='/login') Have an account? Go to login
-      include ./layout/ads.pug  
+      include ./layout/ads.pug
     include ./layout/footer.pug
     script(src="https://code.jquery.com/jquery-3.4.1.min.js")
     script(src='bootstrap.bundle.min.js', crossorigin='anonymous')
