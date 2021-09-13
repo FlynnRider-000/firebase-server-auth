@@ -171,13 +171,18 @@ app.post("/sessionLogin", (req, res) => {
         const dtoken = await admin
           .auth()
           .verifyIdToken(idToken);
-        req.session.uid = dtoken.user_id;
-        req.session.role = dtoken.admin ? 'Admin' : 'User';
-        req.session.email = dtoken.email;
-          
-        const options = { maxAge: expiresIn, httpOnly: true };
-        res.cookie("session", sessionCookie, options);
-        res.end(JSON.stringify({ status: "success" }));
+
+        if (dtoken.email_verified){
+          req.session.uid = dtoken.user_id;
+          req.session.role = dtoken.admin ? 'Admin' : 'User';
+          req.session.email = dtoken.email;
+            
+          const options = { maxAge: expiresIn, httpOnly: true };
+          res.cookie("session", sessionCookie, options);
+          res.end(JSON.stringify({ status: "success" }));
+        } else {
+          res.status(401).send("Verify your email!");  
+        }
       },
       (error) => {
         res.status(401).send("UNAUTHORIZED REQUEST!");
@@ -186,34 +191,13 @@ app.post("/sessionLogin", (req, res) => {
 });
 
 app.post("/sessionSignup", async (req, res) => {
-  const idToken = req.body.idToken.toString();
-
-  const expiresIn = 60 * 60 * 24 * 5 * 1000;
-
   if (req.body.usertype == 'admin'){
     await admin.auth().setCustomUserClaims(req.body.uid, {admin: true});
   } else {
     await admin.auth().setCustomUserClaims(req.body.uid, {admin: false});
   }
 
-  admin
-    .auth()
-    .createSessionCookie(idToken, { expiresIn })
-    .then(
-      (sessionCookie) => {
-        try {
-          const options = { maxAge: expiresIn, httpOnly: true };
-          res.cookie("session", sessionCookie, options);
-          res.end(JSON.stringify({ status: "success" }));
-        } catch(e) {
-          console.log(e);
-          res.status(401).send("UNAUTHORIZED REQUEST!");  
-        }
-      },
-      (error) => {
-        res.status(401).send("UNAUTHORIZED REQUEST!");
-      }
-    );
+  res.status(201).send("success");
 });
 
 app.listen(PORT, () => {

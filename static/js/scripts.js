@@ -29,7 +29,7 @@ $(document).ready(function(){
     $('.deleteAccount').click(function(e) {
         e.preventDefault();              
         $.confirmModal('Are you sure to delete your account?', {}, function(el) {
-            window.location.href = '/deleteuser';
+            window.location.assign("/deleteuser");
             //do delete operation
         });
     });         

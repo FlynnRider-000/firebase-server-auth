@@ -10,14 +10,18 @@ html(lang='en')
         title #{title}
         link(href='css/styles.css', rel='stylesheet')
         link(rel="stylesheet",href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous")
+        link(href='plugins/toastr/css/toastr.min.css', rel='stylesheet')
         script(src='font-awesome.min.js', crossorigin='anonymous')
     body.sb-nav-fixed
         include ./header.pug
         #layoutSidenav
             include ./sidebar.pug
-            block layout-content
+            div#layoutSidenav_content
+                block layout-content
+                include ./ads.pug
         include ./footer.pug
         script(src="https://code.jquery.com/jquery-3.4.1.min.js")
         script(src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js", integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous")
+        script(src='plugins/toastr/js/toastr.min.js', rel='stylesheet')
         script(src='jquery.confirmModal.js', crossorigin='anonymous')
         script(src='js/scripts.js')

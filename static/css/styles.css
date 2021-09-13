@@ -11296,8 +11296,8 @@ body {
 
 #layoutAuthentication {
   display: flex;
-  flex-direction: column;
-  min-height: 100vh;
+  flex-direction: row;
+  height: calc(100vh - 69px);
 }
 #layoutAuthentication #layoutAuthentication_content {
   min-width: 0;
@@ -11321,7 +11321,7 @@ body {
 #layoutSidenav #layoutSidenav_content {
   position: relative;
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   justify-content: space-between;
   min-width: 0;
   flex-grow: 1;
@@ -11688,4 +11688,30 @@ body {
   width: 20px !important;
   font-size: 0.75rem;
   border-radius: 0.25rem !important;
+}
+
+/** Custom Styles **/
+@media (min-width: 992px) {
+  #layoutSidenav #layoutSidenav_content main {
+    width: 80%;
+  }
+  .custom-ads-panel {
+    width: 20%;
+    height: 100%;
+    overflow: auto;
+    border: 3px yellow solid;
+    background-color: white;
+  }
+}
+@media (max-width: 992px) {
+  #layoutSidenav #layoutSidenav_content main {
+    width: 100%;
+  }
+  .custom-ads-panel {
+    display: none;
+    height: 100%;
+    overflow: auto;
+    border: 3px yellow solid;
+    background-color: white;
+  }
 }
