@@ -84,7 +84,6 @@ html(lang='en')
                   .auth()
                   .signInWithEmailAndPassword(login, password)
                   .then(({ user }) => {
-                    console.log(user);
                     if (user.emailVerified) {
                       return user.getIdToken().then((idToken) => {
                           return fetch("/sessionLogin", {

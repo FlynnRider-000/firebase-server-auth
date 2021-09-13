@@ -119,9 +119,10 @@ html(lang='en')
                             let msg = '';
                             if (errorCode === 'auth/email-already-in-use') {
                                 msg = 'The email address is already in use by another account!';
+                            } else if (errorCode === 'auth/weak-password') {
+                                msg = 'Password should be at least 6 characters';
                             }
                             toastr.error("", msg, toastConfig);
-                            console.log(errorCode, errorMessage);
                             return Promise.reject(error);
                         })
                         .then(async () => {
