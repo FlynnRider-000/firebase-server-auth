@@ -11693,11 +11693,11 @@ body {
 /** Custom Styles **/
 @media (min-width: 992px) {
   #layoutSidenav #layoutSidenav_content main {
-    width: 80%;
+    width: calc(100% - 250px);
   }
   .custom-ads-panel {
     margin: 5px 5px 0px 5px;
-    width: calc(20% - 10px);
+    width: 250px;
     height: calc(100% - 5px);
     overflow: auto;
     border: 3px yellow solid;
