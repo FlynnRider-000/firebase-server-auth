@@ -11798,6 +11798,11 @@ ul.todo-list li.checked::before {
   width: 7px;
 }
 
+.todo-list-item {
+  margin-top: 8px;
+  margin-bottom: 8px;
+}
+
 .todo-list-item-name {
   display: inline;
   padding-left: 10px;

@@ -6,7 +6,7 @@ block layout-content
             .row
             form(action="/addTodo?_csrf=" + csrftoken, method="POST")
                 div.input-group
-                    input.form-control(type="text", name="text" placeholder="Add...", aria-label="Add...")
+                    input.form-control(type="text", name="text" placeholder="Add...", aria-label="Add...", style="height: 60px;")
                     button.btn.btn-primary(type="submit")
                         i.fas.fa-plus
         ul.todo-list
@@ -53,22 +53,26 @@ block layout-content
         if ($('main')[0].scrollHeight - $('main').scrollTop() - 0.5 < $('main').outerHeight() && isLoading == false) {
           $('.loadingTodo').css('display', 'block');
           isLoading = true;
-          const lastName = $('.todo-list-item').last()[0].innerText;
-          $.post("/fetchItems?_csrf=" + "#{csrftoken}", {data: lastName}, function(response) {
-            if (response.data.length > 0) {
-              response.data.forEach(e => {
-                $('.todo-list').append(`<li class='todo-list-item ${e.status == 'complete' ? 'checked' : ''}' onclick="onTodoItemClick(event, this)" data-id='${e.name}'><span class='spinner-border-sm spinner-border'></span><div class='todo-list-item-name'>${e.name}</div></li>`);
-              })
-              if (response.data.length == 5) {
-                $('.todo-list').append(`<li style="height: 50px; background-color: yellow;">ads</li>`);
+          if ($('.todo-list-item').last()[0]) {
+            const lastName = $('.todo-list-item').last()[0].innerText;
+            $.post("/fetchItems?_csrf=" + "#{csrftoken}", {data: lastName}, function(response) {
+              if (response.data.length > 0) {
+                response.data.forEach(e => {
+                  $('.todo-list').append(`<li class='todo-list-item ${e.status == 'complete' ? 'checked' : ''}' onclick="onTodoItemClick(event, this)" data-id='${e.name}'><span class='spinner-border-sm spinner-border'></span><div class='todo-list-item-name'>${e.name}</div></li>`);
+                })
+                if (response.data.length == 5) {
+                  $('.todo-list').append(`<li style="height: 50px; background-color: yellow;">ads</li>`);
+                }
+                isLoading = false;
               }
-              isLoading = false;
-            }
+              $('.loadingTodo').css('display', 'none');
+              if (response.data.length == 5) {
+                loadData();
+              }
+            });
+          } else {
             $('.loadingTodo').css('display', 'none');
-            if (response.data.length > 0) {
-              loadData();
-            }
-          });
+          }
         }
       }
       function onTodoItemClick(e, el) {
@@ -86,7 +90,11 @@ block layout-content
         })
       }
       $(document).ready(function(){
-        loadData();
+        if ($('.todo-list-item').length == 5) {
+          loadData();
+        } else {
+          $('.loadingTodo').css('display', 'none');
+        }
       });
       $('main').scroll(function() {
         loadData();
