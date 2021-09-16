@@ -1,0 +1,93 @@
+extends ../layout/layout
+block layout-content
+    main(style="height: 100%; overflow:auto;")
+        .container-fluid.px-4
+            h1.mt-4 To Do List
+            .row
+            form(action="/addTodo?_csrf=" + csrftoken, method="POST")
+                div.input-group
+                    input.form-control(type="text", name="text" placeholder="Add...", aria-label="Add...")
+                    button.btn.btn-primary(type="submit")
+                        i.fas.fa-plus
+        ul.todo-list
+          each val, index in data
+            if val.status == 'complete'
+              li.todo-list-item.checked(data-id=val.name, onclick="onTodoItemClick(event, this)")
+                span.spinner-border-sm.spinner-border
+                .todo-list-item-name #{val.name}
+            else if val.status == 'incomplete'
+              li.todo-list-item(data-id=val.name, onclick="onTodoItemClick(event, this)")
+                span.spinner-border-sm.spinner-border
+                .todo-list-item-name #{val.name}
+            if (index + 1) % 5 == 0
+              li(style="height: 50px; background-color: yellow;") ads
+        div.loadingTodo
+          span.spinner-border
+    script.
+      var isLoading = false;
+      const toastConfig = {
+        positionClass: "toast-top-right",
+        timeOut: 2000,
+        closeButton: !0,
+        debug: !1,
+        newestOnTop: !0,
+        progressBar: !0,
+        preventDuplicates: !0,
+        onclick: null,
+        showDuration: "300",
+        hideDuration: "1000",
+        extendedTimeOut: "1000",
+        showEasing: "swing",
+        hideEasing: "linear",
+        showMethod: "fadeIn",
+        hideMethod: "fadeOut",
+        tapToDismiss: !1
+      };
+      window.onload = function(){
+        const msg = '#{msg}';
+        if (msg) {
+          toastr.error("", msg, toastConfig);
+        } 
+      };
+      function loadData() {
+        if ($('main')[0].scrollHeight - $('main').scrollTop() - 0.5 < $('main').outerHeight() && isLoading == false) {
+          $('.loadingTodo').css('display', 'block');
+          isLoading = true;
+          const lastName = $('.todo-list-item').last()[0].innerText;
+          $.post("/fetchItems?_csrf=" + "#{csrftoken}", {data: lastName}, function(response) {
+            if (response.data.length > 0) {
+              response.data.forEach(e => {
+                $('.todo-list').append(`<li class='todo-list-item ${e.status == 'complete' ? 'checked' : ''}' onclick="onTodoItemClick(event, this)" data-id='${e.name}'><span class='spinner-border-sm spinner-border'></span><div class='todo-list-item-name'>${e.name}</div></li>`);
+              })
+              if (response.data.length == 5) {
+                $('.todo-list').append(`<li style="height: 50px; background-color: yellow;">ads</li>`);
+              }
+              isLoading = false;
+            }
+            $('.loadingTodo').css('display', 'none');
+            if (response.data.length > 0) {
+              loadData();
+            }
+          });
+        }
+      }
+      function onTodoItemClick(e, el) {
+        const itemName = $(el).data('id');
+        const _el = el;
+        $(_el).addClass('waiting');
+        $.post("/completeItem?_csrf=" + "#{csrftoken}", {data: itemName}, function(response) {
+          if (response.status === 'complete') {
+            $(_el).addClass("checked");
+            $(_el).removeClass('waiting');
+          } else if (response.status === 'incomplete') {
+            $(_el).removeClass("checked");
+            $(_el).removeClass('waiting');
+          }
+        })
+      }
+      $(document).ready(function(){
+        loadData();
+      });
+      $('main').scroll(function() {
+        loadData();
+      });

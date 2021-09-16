@@ -1,4 +1,5 @@
 const admin = require("firebase-admin");
+const { firestore } = require("firebase-admin");
 const serviceAccount = require("./serviceAccountKey.json");
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
@@ -18,6 +19,7 @@ const config = {
 initializeApp(config);
 
 const { getAuth, sendPasswordResetEmail } = require('firebase/auth');
+
 var express = require('express');
 var router = express.Router();
 
@@ -111,7 +113,128 @@ router.get("/deleteuser", function (req, res) {
     res.redirect("/login");
   }
 });
-  
+
+router.get("/todo", async function (req, res) {
+  if (req.session.role == 'Admin' || req.session.role == 'User') {
+    const uid = req.session.uid;
+    const data = [];
+    const uDoc = firestore().collection('TodoList').doc(uid);
+    uDoc.collection('todos')
+      .limit(5)
+      .get()
+      .then((querySnapshot) => {
+        querySnapshot.forEach((doc) => {
+          data.push({
+            name: doc.id,
+            status: doc.data().status,
+          });
+        });
+
+        if (req.session.todoMsg) {
+          const msg = req.session.todoMsg;
+          req.session.todoMsg = null;
+          res.render("common/todo.pug", {user: req.session, data: data, msg});
+        } else {
+          res.render("common/todo.pug", {user: req.session, data: data, msg: ''});
+        }
+      });
+  } else {
+    res.redirect('/');
+  }
+});
+
+router.post("/fetchItems", async function(req, res) {
+  if (req.session.role == 'Admin' || req.session.role == 'User') {
+    const uid = req.session.uid;
+    const lastid = req.body.data;
+    const data = [];
+    const uDoc = firestore().collection('TodoList').doc(uid);
+    const first = uDoc.collection('todos').limit(5);
+
+    const snapshot = await first.get();
+
+    const next = uDoc.collection('todos')
+      .orderBy(admin.firestore.FieldPath.documentId())
+      .startAfter(lastid)
+      .limit(5)
+      .get()
+      .then((querySnapshot) => {
+        querySnapshot.forEach((doc) => {
+          data.push({
+            name: doc.id,
+            status: doc.data().status,
+          });
+        });
+      res.json({data: data});
+      });
+  } else {
+    res.redirect('/');
+  }
+})
+
+router.post("/addTodo", function(req, res) {
+  if (req.session.role == 'Admin' || req.session.role == 'User') {
+    const data = req.body.text;
+    const uid = req.session.uid;
+
+    const uDoc = firestore().collection('TodoList').doc(uid);
+    uDoc
+      .set({type: req.session.role})
+      .then(() => {
+        const uSubColl = uDoc.collection('todos');
+        uSubColl.get()
+          .then((querySnapshot) => {
+            let todoExist = false;
+            querySnapshot.forEach((doc) => {
+              if (doc.id == data) {
+                todoExist = true;
+              }
+            });
+            if (todoExist) {
+              req.session.todoMsg = 'To do item already exist!';
+              res.redirect('/todo');
+            } else {
+              uSubColl.doc(data).set({ status: 'incomplete',})
+                .then(() => {
+                  res.redirect('/todo');
+                })
+                .catch(() => {
+                  res.redirect('/todo');
+                });
+            }
+          })
+          .catch(() => {
+            res.redirect('/todo');
+          });
+      })
+      .catch(() => {
+        res.redirect('/todo');
+      });
+  } else {
+    res.redirect('/');
+  }
+})
+
+router.post("/completeItem", function(req, res) {
+  const data = req.body.data;
+  const uid = req.session.uid;
+  const uDoc = firestore().collection('TodoList').doc(uid).collection('todos').doc(data)
+  uDoc
+    .get()
+    .then(async (snapshot) => {
+      if (snapshot.data().status === 'incomplete') {
+        await uDoc.update({status: 'complete'})
+        res.json({status: 'complete'});
+      } else {
+        await uDoc.update({status: 'incomplete'});
+        res.json({status: 'incomplete'});
+      }
+    })
+    .catch(() => {
+      res.json({success: false});
+    })
+})
+
 router.get("/admin", function (req, res) {
   if (req.session.role == 'Admin') {
     res.render("admin/dashboard.pug", {user: req.session});
