@@ -149,9 +149,6 @@ router.post("/fetchItems", async function(req, res) {
     const lastid = req.body.data;
     const data = [];
     const uDoc = firestore().collection('TodoList').doc(uid);
-    const first = uDoc.collection('todos').limit(5);
-
-    const snapshot = await first.get();
 
     const next = uDoc.collection('todos')
       .orderBy(admin.firestore.FieldPath.documentId())

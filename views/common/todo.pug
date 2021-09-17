@@ -77,15 +77,14 @@ block layout-content
       }
       function onTodoItemClick(e, el) {
         const itemName = $(el).data('id');
-        const _el = el;
-        $(_el).addClass('waiting');
+        $(el).addClass('waiting');
         $.post("/completeItem?_csrf=" + "#{csrftoken}", {data: itemName}, function(response) {
           if (response.status === 'complete') {
-            $(_el).addClass("checked");
-            $(_el).removeClass('waiting');
+            $(el).addClass("checked");
+            $(el).removeClass('waiting');
           } else if (response.status === 'incomplete') {
-            $(_el).removeClass("checked");
-            $(_el).removeClass('waiting');
+            $(el).removeClass("checked");
+            $(el).removeClass('waiting');
           }
         })
       }
