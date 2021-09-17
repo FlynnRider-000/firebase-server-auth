@@ -4,21 +4,37 @@ block layout-content
         .container-fluid.px-4
             h1.mt-4 To Do List
             .row
-            form(action="/addTodo?_csrf=" + csrftoken, method="POST")
-                div.input-group
-                    input.form-control(type="text", name="text" placeholder="Add...", aria-label="Add...", style="height: 60px;")
-                    button.btn.btn-primary(type="submit")
-                        i.fas.fa-plus
+            form#addToDo(action="/addTodo?_csrf=" + csrftoken, method="POST", onsubmit="onAddTodo(event)") 
+                .form-group.row
+                  .form-sm-10
+                    button.btn.btn-primary(type="submit", style="float: right") Add
+                .form-row
+                  .form-group.col-md-6
+                    input.form-control(type="text", name="title", placeholder="Title", style="height: 60px;")
+                  .form-group.col-md-6
+                    input.form-control(type="text", name="url", placeholder="Image Url", style="height: 60px;")
+                .form-group
+                  textarea.form-control(type="text", name="description", placeholder="Description", rows="3", style="width: 100%;")
         ul.todo-list
           each val, index in data
             if val.status == 'complete'
-              li.todo-list-item.checked(data-id=val.name, onclick="onTodoItemClick(event, this)")
+              li.todo-list-item.shadow-lg.rounded.checked(data-id=val.title, onclick="onTodoItemClick(event, this)")
                 span.spinner-border-sm.spinner-border
-                .todo-list-item-name #{val.name}
+                div.d-flex.flex-row
+                  .img-container
+                    img.rounded-lg(style="width: 120px; height: 120px;", src=val.url)
+                  .description(style="flex: 1;")
+                      .todo-list-item-title #{val.title}
+                      .todo-list-item-description #{val.description}
             else if val.status == 'incomplete'
-              li.todo-list-item(data-id=val.name, onclick="onTodoItemClick(event, this)")
+              li.todo-list-item.shadow-lg.rounded(data-id=val.title, onclick="onTodoItemClick(event, this)")
                 span.spinner-border-sm.spinner-border
-                .todo-list-item-name #{val.name}
+                div.d-flex.flex-row
+                  .img-container
+                    img.rounded-lg(style="width: 120px; height: 120px;", src=val.url)
+                  .description(style="flex: 1;")
+                      .todo-list-item-title #{val.title}
+                      .todo-list-item-description #{val.description}
             if (index + 1) % 5 == 0
               li(style="height: 50px; background-color: yellow;") ads
         div.loadingTodo
@@ -49,6 +65,17 @@ block layout-content
           toastr.error("", msg, toastConfig);
         } 
       };
+      function onAddTodo(event) {
+        var formEl = document.forms.addToDo;
+        var formData = new FormData(formEl);
+        if (formData.get('title') && formData.get('description') && formData.get('url')) {
+          return;
+        } else {
+          event.preventDefault();
+          event.stopPropagation();
+          toastr.error("", 'Fill all Fields!', toastConfig);
+        }
+      }
       function loadData() {
         if ($('main')[0].scrollHeight - $('main').scrollTop() - 0.5 < $('main').outerHeight() && isLoading == false) {
           $('.loadingTodo').css('display', 'block');
@@ -58,7 +85,7 @@ block layout-content
             $.post("/fetchItems?_csrf=" + "#{csrftoken}", {data: lastName}, function(response) {
               if (response.data.length > 0) {
                 response.data.forEach(e => {
-                  $('.todo-list').append(`<li class='todo-list-item ${e.status == 'complete' ? 'checked' : ''}' onclick="onTodoItemClick(event, this)" data-id='${e.name}'><span class='spinner-border-sm spinner-border'></span><div class='todo-list-item-name'>${e.name}</div></li>`);
+                  $('.todo-list').append(`<li class='todo-list-item shadow-lg rounded ${e.status == 'complete' ? 'checked' : ''}' onclick="onTodoItemClick(event, this)" data-id='${e.title}'><span class='spinner-border-sm spinner-border'></span><div class="d-flex flex-row"><div class="image-container"><img class="rounded-lg" style="width: 120px; height: 120px; visibility: visible;" src="${e.url}"></div><div class="description" style="flex: 1;"><div class="todo-list-item-title">${e.title}</div><div class="todo-list-item-description">${e.description}</div></div></div></li>`);
                 })
                 if (response.data.length == 5) {
                   $('.todo-list').append(`<li style="height: 50px; background-color: yellow;">ads</li>`);

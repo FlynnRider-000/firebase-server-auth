@@ -11757,7 +11757,7 @@ ul.todo-list li {
   cursor: pointer;
   position: relative;
   padding: 12px 8px 12px 40px;
-  background: #eee;
+  background: white;
   font-size: 18px;
   transition: 0.2s;
 
@@ -11768,30 +11768,24 @@ ul.todo-list li {
   user-select: none;
 }
 
-/* Set all odd list items to a different color (zebra-stripes) */
-ul.todo-list li:nth-child(odd) {
-  background: #f9f9f9;
+/* When clicked on, add a background color and strike out text */
+ul.todo-list li.checked {
+  background: #ddd;
+  text-decoration: line-through;
 }
 
 /* Darker background-color on hover */
 ul.todo-list li:hover {
-  background: #ddd;
-}
-
-/* When clicked on, add a background color and strike out text */
-ul.todo-list li.checked {
-  background: #888;
-  color: #fff;
-  text-decoration: line-through;
+  background: #fafafa;
 }
 
 /* Add a "checked" mark when clicked on */
 ul.todo-list li.checked::before {
   content: '';
   position: absolute;
-  border-color: #fff;
+  border-color: black;
   border-style: solid;
-  border-width: 0 2px 2px 0;
+  border-width: 0 5px 5px 0;
   left: 16px;
   transform: rotate(45deg);
   height: 20px;
@@ -11799,17 +11793,27 @@ ul.todo-list li.checked::before {
 }
 
 .todo-list-item {
-  margin-top: 8px;
-  margin-bottom: 8px;
+  margin-top: 12px;
+  margin-bottom: 12px;
 }
 
-.todo-list-item-name {
-  display: inline;
+.todo-list-item-title {
   padding-left: 10px;
+  font-weight: bold;
+  font-size: 24px;
+}
+
+.todo-list-item-description {
+  padding-left: 10px;
+  font-size: 18px;
 }
 
 li .spinner-border {
   display: none !important;
+  position: absolute;
+  right: 0;
+  top: 0;
+  margin: 10px;
 }
 
 .waiting .spinner-border {
@@ -11818,4 +11822,5 @@ li .spinner-border {
 
 .loadingTodo {
   text-align: center;
+  height: 50px;
 }

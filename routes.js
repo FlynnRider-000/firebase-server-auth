@@ -125,8 +125,10 @@ router.get("/todo", async function (req, res) {
       .then((querySnapshot) => {
         querySnapshot.forEach((doc) => {
           data.push({
-            name: doc.id,
+            title: doc.id,
             status: doc.data().status,
+            description: doc.data().description,
+            url: doc.data().url,
           });
         });
 
@@ -158,8 +160,10 @@ router.post("/fetchItems", async function(req, res) {
       .then((querySnapshot) => {
         querySnapshot.forEach((doc) => {
           data.push({
-            name: doc.id,
+            title: doc.id,
             status: doc.data().status,
+            description: doc.data().description,
+            url: doc.data().url,
           });
         });
       res.json({data: data});
@@ -171,7 +175,7 @@ router.post("/fetchItems", async function(req, res) {
 
 router.post("/addTodo", function(req, res) {
   if (req.session.role == 'Admin' || req.session.role == 'User') {
-    const data = req.body.text;
+    const data = req.body;
     const uid = req.session.uid;
 
     const uDoc = firestore().collection('TodoList').doc(uid);
@@ -183,7 +187,7 @@ router.post("/addTodo", function(req, res) {
           .then((querySnapshot) => {
             let todoExist = false;
             querySnapshot.forEach((doc) => {
-              if (doc.id == data) {
+              if (doc.id == data.title) {
                 todoExist = true;
               }
             });
@@ -191,7 +195,7 @@ router.post("/addTodo", function(req, res) {
               req.session.todoMsg = 'To do item already exist!';
               res.redirect('/todo');
             } else {
-              uSubColl.doc(data).set({ status: 'incomplete',})
+              uSubColl.doc(data.title).set({ status: 'incomplete', description: data.description, url: data.url})
                 .then(() => {
                   res.redirect('/todo');
                 })
