@@ -11774,11 +11774,6 @@ ul.todo-list li.checked {
   text-decoration: line-through;
 }
 
-/* Darker background-color on hover */
-ul.todo-list li:hover {
-  background: #fafafa;
-}
-
 /* Add a "checked" mark when clicked on */
 ul.todo-list li.checked::before {
   content: '';
@@ -11801,11 +11796,13 @@ ul.todo-list li.checked::before {
   padding-left: 10px;
   font-weight: bold;
   font-size: 24px;
+  word-break: break-word;
 }
 
 .todo-list-item-description {
   padding-left: 10px;
   font-size: 18px;
+  word-break: break-word;
 }
 
 li .spinner-border {
@@ -11823,4 +11820,15 @@ li .spinner-border {
 .loadingTodo {
   text-align: center;
   height: 50px;
+}
+
+@media (hover: hover) {
+  .todo-list-item:hover img {
+    transition: .3s;
+    transform: scale(0.9);
+  }
+  /* Darker background-color on hover */
+  ul.todo-list li:hover {
+    background: #fafafa;
+  }
 }

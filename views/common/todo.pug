@@ -1,6 +1,6 @@
 extends ../layout/layout
 block layout-content
-    main(style="height: 100%; overflow:auto;")
+    main(style="overflow:auto;")
         .container-fluid.px-4
             h1.mt-4 To Do List
             .row
@@ -20,19 +20,19 @@ block layout-content
             if val.status == 'complete'
               li.todo-list-item.shadow-lg.rounded.checked(data-id=val.title, onclick="onTodoItemClick(event, this)")
                 span.spinner-border-sm.spinner-border
-                div.d-flex.flex-row
+                div.d-flex.flex-row.w-100
                   .img-container
                     img.rounded-lg(style="width: 120px; height: 120px;", src=val.url)
-                  .description(style="flex: 1;")
+                  .description(style="flex: 1; width: calc(100% - 150px)")
                       .todo-list-item-title #{val.title}
                       .todo-list-item-description #{val.description}
             else if val.status == 'incomplete'
               li.todo-list-item.shadow-lg.rounded(data-id=val.title, onclick="onTodoItemClick(event, this)")
                 span.spinner-border-sm.spinner-border
-                div.d-flex.flex-row
+                div.d-flex.flex-row.w-100
                   .img-container
                     img.rounded-lg(style="width: 120px; height: 120px;", src=val.url)
-                  .description(style="flex: 1;")
+                  .description(style="flex: 1; width: calc(100% - 150px)")
                       .todo-list-item-title #{val.title}
                       .todo-list-item-description #{val.description}
             if (index + 1) % 5 == 0
@@ -77,7 +77,8 @@ block layout-content
         }
       }
       function loadData() {
-        if ($('main')[0].scrollHeight - $('main').scrollTop() - 0.5 < $('main').outerHeight() && isLoading == false) {
+        console.log($('main')[0].scrollHeight, $('main').scrollTop(), $('main').outerHeight());
+        if ($('main')[0].scrollHeight - $('main').scrollTop() - 1.5 < $('main').outerHeight() && isLoading == false) {
           $('.loadingTodo').css('display', 'block');
           isLoading = true;
           if ($('.todo-list-item').last()[0]) {
@@ -85,7 +86,7 @@ block layout-content
             $.post("/fetchItems?_csrf=" + "#{csrftoken}", {data: lastName}, function(response) {
               if (response.data.length > 0) {
                 response.data.forEach(e => {
-                  $('.todo-list').append(`<li class='todo-list-item shadow-lg rounded ${e.status == 'complete' ? 'checked' : ''}' onclick="onTodoItemClick(event, this)" data-id='${e.title}'><span class='spinner-border-sm spinner-border'></span><div class="d-flex flex-row"><div class="image-container"><img class="rounded-lg" style="width: 120px; height: 120px; visibility: visible;" src="${e.url}"></div><div class="description" style="flex: 1;"><div class="todo-list-item-title">${e.title}</div><div class="todo-list-item-description">${e.description}</div></div></div></li>`);
+                  $('.todo-list').append(`<li class='todo-list-item shadow-lg rounded ${e.status == 'complete' ? 'checked' : ''}' onclick="onTodoItemClick(event, this)" data-id='${e.title}'><span class='spinner-border-sm spinner-border'></span><div class="d-flex flex-row w-100"><div class="image-container"><img class="rounded-lg" style="width: 120px; height: 120px; visibility: visible;" src="${e.url}"></div><div class="description" style="flex: 1; width: calc(100% - 150px);"><div class="todo-list-item-title">${e.title}</div><div class="todo-list-item-description">${e.description}</div></div></div></li>`);
                 })
                 if (response.data.length == 5) {
                   $('.todo-list').append(`<li style="height: 50px; background-color: yellow;">ads</li>`);
