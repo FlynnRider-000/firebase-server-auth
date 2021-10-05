@@ -84,6 +84,10 @@ block layout-content
           if ($('.todo-list-item').last()[0]) {
             const lastName = $('.todo-list-item').last()[0].innerText;
             $.post("/fetchItems?_csrf=" + "#{csrftoken}", {data: lastName}, function(response) {
+              if (response.data.status == 'error') {
+                window.location.assign('/');
+                return;
+              }
               if (response.data.length > 0) {
                 response.data.forEach(e => {
                   $('.todo-list').append(`<li class='todo-list-item shadow-lg rounded ${e.status == 'complete' ? 'checked' : ''}' onclick="onTodoItemClick(event, this)" data-id='${e.title}'><span class='spinner-border-sm spinner-border'></span><div class="d-flex flex-row w-100"><div class="image-container"><img class="rounded-lg" style="width: 120px; height: 120px; visibility: visible;" src="${e.url}"></div><div class="description" style="flex: 1; width: calc(100% - 150px);"><div class="todo-list-item-title">${e.title}</div><div class="todo-list-item-description">${e.description}</div></div></div></li>`);

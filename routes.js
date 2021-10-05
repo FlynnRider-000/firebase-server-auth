@@ -166,10 +166,10 @@ router.post("/fetchItems", async function(req, res) {
             url: doc.data().url,
           });
         });
-      res.json({data: data});
+      res.json({status:'success', data: data});
       });
   } else {
-    res.redirect('/');
+    res.json({status:'error', msg: 'Session expired'});
   }
 })
 
@@ -273,7 +273,7 @@ router.get("/doLogin", function (req, res) {
 router.post("/sessionLogin", (req, res) => {
   const idToken = req.body.idToken.toString();
 
-  const expiresIn = 60 * 60 * 24 * 5 * 1000;
+  const expiresIn = 60 * 60 * 24 * 5 * 1000; // 5 days
 
   admin
     .auth()
